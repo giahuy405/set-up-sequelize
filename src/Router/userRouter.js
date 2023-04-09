@@ -6,6 +6,6 @@ userRouter.get('/get-user', getUser);
 userRouter.get('/get-all-user', getAllUser);
 userRouter.post('/create-user', createUser);
 userRouter.put('/update-user', updateUser);
-userRouter.delete('/delete-user', deleteUser);
+userRouter.delete('/delete-user/:user_id', deleteUser);
 
 module.exports = userRouter;

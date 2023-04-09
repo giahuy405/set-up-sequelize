@@ -1,36 +1,45 @@
-const User = require('../Models/userModel')
 const { Sequelize } = require('sequelize');
+const { successCode, errorCode } = require('../utils/response');
 const Op = Sequelize.Op;
+
+const initalModel = require('../Models/init-models');
+const sequelize = require('../Models/index')
+const models = initalModel(sequelize)
 
 const getUser = async (req, res) => {
     try {
-        const data = await User.findAll({
+        const data = await models.user.findAll({
             where: {
                 full_name: {
                     [Op.like]: "%ang"
                 }
             }
         });
-        res.send(data);
+        // res.send(data);
+        successCode(res, "get User success", data);
     } catch (err) {
-        res.status(500).send('server internal error')
+        // res.status(500).send('server internal error')
+        errorCode(res, 'lỗi BE')
     }
 }
 const getAllUser = async (req, res) => {
     try {
-        const data = await User.findAll({});
-        res.send(data);
+        const data = await models.food.findAll({
+            include:['type']
+        });
+
+        successCode(res, "get all user success", data);
     } catch (err) {
-        res.status(500).send('server internal error')
+        errorCode(res, 'lỗi BE')
     }
 }
 const createUser = async (req, res) => {
     try {
         const { full_name, email, pass_word } = req.body;
-        await User.create({ full_name, email, pass_word })
-        res.send('create user');
+        await models.user.create({ full_name, email, pass_word })
+        successCode(res, "craete user success", '');
     } catch (err) {
-        res.status(500).send('server internal error')
+        errorCode(res, 'lỗi BE')
     }
 }
 const updateUser = async (req, res) => {
@@ -38,28 +47,29 @@ const updateUser = async (req, res) => {
         const { full_name, email, pass_word } = req.body;
         const { user_id } = req.params;
         let newData = { full_name, email, pass_word }
-        await User.update(newData, {
+        await models.user.update(newData, {
             where: {
                 user_id
             }
         })
-        res.send('update user');
+        successCode(res, "update user success", '');
     } catch (err) {
-        res.status(500).send('server internal error')
+        errorCode(res, 'lỗi BE')
     }
 }
 const deleteUser = async (req, res) => {
     try {
         const { user_id } = req.params;
+        console.log(user_id)
 
-        await User.destroy({
+        await models.user.destroy({
             where: {
-                user_id
+                user_id 
             }
         })
-        res.send('delete user');
+        successCode(res, "delete user success", '');
     } catch (err) {
-        res.status(500).send('server internal error')
+        errorCode(res, 'lỗi BE')
     }
 }
 

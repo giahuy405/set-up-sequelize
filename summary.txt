@@ -1,0 +1,25 @@
+
+
+
+
+Day 5
+- set up utils/response.js tạo status code 
+- tạo file .env biến môi trường -> yarn add dotenv
+- yarn add sequelize-cli
+- yarn sequelize-cli init
+Tạo model User bằng : 
+- yarn sequelize-cli model:generate --name User --attributes user_id:integer,full_name:string,email:string,pass_word:string
+Tạo table trong database ( nhớ đổi number thành integer vì migrate ko có kiểu number )
+- yarn sequelize-cli db:migrate
+- yarn add sequelize-auto ( có lỗi thì nhớ check cái folder migrate chuyển NUMBER => INTEGER )
+- yarn sequelize-cli seed:generate --name demo-user ( tạo file trong folder seeders )
+https://sequelize.org/docs/v6/other-topics/migrations/#installing-the-cli
+- folder seeders để tạo database cho table  
+-  npx sequelize-cli db:seed:all ( để đẩy dữ liệu lên db )
+
+- important : 
+- yarn add sequelize-auto -> (database first)
+- yarn sequelize-auto -h <host> -d <database> -u <user> -x [password] -p [port] --dialect [dialect] -o [/path/to/models] -l es6
+- yarn sequelize-auto -h localhost -d db_food -u root -x 1234 -p 3307 --dialect mysql -o src/Models -l es6
+
+
