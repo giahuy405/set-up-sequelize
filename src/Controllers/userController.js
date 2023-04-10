@@ -72,8 +72,21 @@ const deleteUser = async (req, res) => {
         errorCode(res, 'lỗi BE')
     }
 }
+const getUserPagination = async (req, res) => {
+    try {
+        let { page, pageSize } = req.params;
 
+        const index = (page - 1) * pageSize;
+        let data = await models.user.findAll({
+            offset: index, // index bắt đầu từ 0 
+            limit: Number(pageSize) // số lượng lấy (phải để kiểu số để dấu +pageSize hoặc dùng Number()) 
+        })
+        successCode(res, "delete user success", data);
+    } catch (err) {
+        errorCode(res, 'lỗi BE')
+    }
+}
 
 module.exports = {
-    getUser, createUser, updateUser, deleteUser, getAllUser
+    getUser, createUser, updateUser, deleteUser, getAllUser,getUserPagination
 }
