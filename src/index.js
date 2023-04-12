@@ -4,8 +4,10 @@ const app = express();
 const cors = require('cors');
 const rootRouter = require('./Router/rootRouter');
 app.use(cors());
-
+ 
 app.use(express.json());
+// có thể thấy được thư mực bên trong 
+app.use(express.static('.'))
 
 app.listen(3000);
 

@@ -1,5 +1,5 @@
 const { Sequelize } = require('sequelize');
-const { successCode, errorCode } = require('../utils/response');
+const { successCode, errorCode, failCode } = require('../utils/response');
 const Op = Sequelize.Op;
 
 const initalModel = require('../Models/init-models');
@@ -25,7 +25,7 @@ const getUser = async (req, res) => {
 const getAllUser = async (req, res) => {
     try {
         const data = await models.food.findAll({
-            include:['type']
+            include: ['type']
         });
 
         successCode(res, "get all user success", data);
@@ -64,7 +64,7 @@ const deleteUser = async (req, res) => {
 
         await models.user.destroy({
             where: {
-                user_id 
+                user_id
             }
         })
         successCode(res, "delete user success", '');
@@ -87,6 +87,44 @@ const getUserPagination = async (req, res) => {
     }
 }
 
+const loginUser = async (req, res) => {
+    try {
+        let { email, pass_word } = req.body;
+
+        let checkUser = await models.user.findOne({
+            where: {
+                email,
+            }
+        })
+        if (checkUser.length > 0) {
+            // login thành công
+            if (checkUser.pass_word === pass_word) {
+                successCode(res, "token", data);
+            } else {
+                failCode(res, 'password  fail', '')
+            }
+        } else {
+            // ko thành công
+            failCode(res, 'email  fail', '')
+        }
+
+    } catch (err) {
+        errorCode(res, 'lỗi BE')
+    }
+}
+
+
+const signUpUser = async (req, res) => {
+    try {
+        const { full_name, email, pass_word } = req.body;
+        await models.user.create({ full_name, email, pass_word })
+        successCode(res, "sign up success", '');
+    } catch (err) {
+        errorCode(res, 'lỗi BE')
+    }
+}
+
+
 module.exports = {
-    getUser, createUser, updateUser, deleteUser, getAllUser,getUserPagination
+    getUser, createUser, updateUser, deleteUser, getAllUser, getUserPagination, loginUser, signUpUser
 }

@@ -39,3 +39,12 @@ https://sequelize.org/docs/v6/other-topics/migrations/#installing-the-cli
 
 Swagger 
 - yarn add swagger-ui-express swagger-jsdoc
+
+Day 6
+- yarn add multer -> để thêm hình
+- 3 cách lưu img,video 
+    + 1 trên code BE => lưu trên server 
+    + lưu trên bên thứ 3 
+    + base 64 => lưu trên database
+- postman : body -> form-data -> file ở mục key "file" đặt giống với đối số thứ 2 
+- require('fs') -> file system
