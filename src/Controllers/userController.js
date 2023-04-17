@@ -62,12 +62,16 @@ const deleteUser = async (req, res) => {
         const { user_id } = req.params;
         console.log(user_id)
 
-        await models.user.destroy({
+        const deletedRowsCount = await models.user.destroy({
             where: {
                 user_id
             }
         })
-        successCode(res, "delete user success", '');
+        if (deletedRowsCount > 0) {
+            successCode(res, "User has been successfully deleted.", deletedRowsCount);
+        } else {
+            errorCode(res, 'User not found.');
+        }
     } catch (err) {
         errorCode(res, 'lỗi BE')
     }
