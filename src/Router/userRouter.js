@@ -1,5 +1,5 @@
 const express = require('express');
-const { getUser, createUser, updateUser, deleteUser, getAllUser, getUserPagination, loginUser, signUpUser } = require('../Controllers/userController');
+const { getUser, createUser, updateUser, deleteUser, getAllUser, getUserPagination, loginUser, signUpUser, loginFacebook } = require('../Controllers/userController');
 const userRouter = express.Router();
 
 // __dirname       trả về đường dẫn file đang đứng  ~/set-up-sequelize/src/Routers
@@ -20,6 +20,7 @@ let upload = multer({
 })
 // file system
 const fs = require('fs');
+const { checkToken, privateAPI } = require('../utils/jwt');
 
 
 // C2
@@ -32,10 +33,10 @@ userRouter.post("/upload", upload.single('file'), (req, res) => {
         // băm hình thành base 64
         let base64 = `data:${file.mimetype};base64,${Buffer.from(data).toString("base64")}`;
         // xóa hình
-        fs.unlink(process.cwd()+"/public/img/"+ file.filename, ()=>{})
+        fs.unlink(process.cwd() + "/public/img/" + file.filename, () => { })
         res.send(base64)
     })
- 
+
 
 
     // sequelize food.udpate() -> file.filename 
@@ -53,7 +54,7 @@ userRouter.post("/upload", upload.single('file'), (req, res) => {
 
 
 userRouter.get('/get-user', getUser);
-userRouter.get('/get-all-user', getAllUser);
+userRouter.get('/get-all-user', privateAPI, getAllUser);
 userRouter.post('/create-user', createUser);
 userRouter.put('/update-user', updateUser);
 userRouter.delete('/delete-user/:user_id', deleteUser);
@@ -61,6 +62,7 @@ userRouter.get('/get-user-pagination/:page/:pageSize', getUserPagination);
 
 userRouter.post('/login', loginUser);
 userRouter.post('/sign-up', signUpUser);
+userRouter.post('/login-facebook', loginFacebook);
 
 
 module.exports = userRouter;

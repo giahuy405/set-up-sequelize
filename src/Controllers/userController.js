@@ -87,6 +87,10 @@ const getUserPagination = async (req, res) => {
     }
 }
 
+// login - sign up
+const bcrypt = require('bcrypt');
+const { generateToken } = require('../utils/jwt');
+
 const loginUser = async (req, res) => {
     try {
         let { email, pass_word } = req.body;
@@ -96,12 +100,14 @@ const loginUser = async (req, res) => {
                 email,
             }
         })
-        if (checkUser.length > 0) {
-            // login thành công
-            if (checkUser.pass_word === pass_word) {
-                successCode(res, "token", data);
+        if (checkUser) {
+            let checkPass = bcrypt.compareSync(pass_word, checkUser.pass_word);
+            if (checkPass) {
+                console.log(checkUser.dataValues)
+                let token = generateToken(checkUser.dataValues) // ko dc truyền string number
+                successCode(res, "Đăng nhập thành công", token);
             } else {
-                failCode(res, 'password  fail', '')
+                failCode(res, 'wrong password', '')
             }
         } else {
             // ko thành công
@@ -117,14 +123,52 @@ const loginUser = async (req, res) => {
 const signUpUser = async (req, res) => {
     try {
         const { full_name, email, pass_word } = req.body;
-        await models.user.create({ full_name, email, pass_word })
+        let newData = {
+            full_name,
+            email,
+            pass_word: bcrypt.hashSync(pass_word, 12)   // mã hóa
+        }
+        // check email trùng
+        let checkEmail = await models.user.findOne({
+            where: {
+                email,
+            }
+        })
+        if (checkEmail) {
+            failCode(res, "Email đã tồn tại", "");
+            return
+        }
+        await models.user.create(newData);
+        successCode(res, "sign up success", '');
+    } catch (err) {
+        errorCode(res, 'lỗi BE')
+    }
+}
+const loginFacebook = async (req, res) => {
+    try {
+        const { full_name, email, pass_word } = req.body;
+        let newData = {
+            full_name,
+            email,
+            pass_word: bcrypt.hashSync(pass_word, 12)   // mã hóa
+        }
+        // check email trùng
+        let checkEmail = await models.user.findOne({
+            where: {
+                email,
+            }
+        })
+        if (checkEmail) {
+            failCode(res, "Email đã tồn tại", "");
+            return
+        }
+        await models.user.create(newData);
         successCode(res, "sign up success", '');
     } catch (err) {
         errorCode(res, 'lỗi BE')
     }
 }
 
-
 module.exports = {
-    getUser, createUser, updateUser, deleteUser, getAllUser, getUserPagination, loginUser, signUpUser
+    getUser, createUser, updateUser, deleteUser, getAllUser, getUserPagination, loginUser, signUpUser,loginFacebook
 }
